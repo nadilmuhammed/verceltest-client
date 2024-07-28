@@ -13,6 +13,7 @@ const Login = () => {
   const { setAuthUser } = useAuthContext();
   const [view, setView] = useState(false);
   const [loading, setLoaing] = useState(false);
+  const [gloading, setGloading] = useState(false);
   const [store, setStore] = useState({
     username: "",
     email: "",
@@ -86,6 +87,7 @@ const Login = () => {
       const user = result.user;
       const idToken = await user.getIdToken();
 
+      setGloading(true);
       const response = await axios.post("/api/api/auth/googlelogin", {
         idToken,
       });
@@ -100,6 +102,8 @@ const Login = () => {
     } catch (error) {
       console.log(error.message);
       toast.error(error.response.data.error);
+    } finally {
+      setGloading(false);
     }
   };
 
@@ -112,12 +116,17 @@ const Login = () => {
         <div className="w-full">
           <button
             onClick={handleGoogleLogin}
-            className="flex justify-center items-center border border-gray-300 w-full rounded-full btn btn-sm gap-2 outline-none"
+            className="relative flex justify-center items-center border border-gray-300 w-full rounded-full btn btn-sm outline-none"
           >
-            <span>
-              <FcGoogle size={25} />
+            <span className="flex items-center gap-2">
+              <span>
+                <FcGoogle size={25} />
+              </span>
+              <span className="font-[500] text-sm">Sign In with google</span>
             </span>
-            <span className="font-[500] text-sm">Sign In with google</span>
+            {gloading && (
+              <label className="absolute right-3 loading loading-spinner loading-sm"></label>
+            )}
           </button>
         </div>
         <div className="w-full flex items-center gap-3">

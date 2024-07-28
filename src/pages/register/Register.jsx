@@ -17,6 +17,7 @@ const Register = () => {
   const [checked, setChecked] = useState(false);
   const [checkedError, setCheckedError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [gloading, setGloading] = useState(false);
 
   const [formData, setFormData] = useState({
     fullname: "",
@@ -111,7 +112,8 @@ const Register = () => {
       const user = result.user;
       const idToken = await user.getIdToken();
       // Send user details to the backend
-      const response = await axios.post("/api/api/auth/googleauth", {
+      setGloading(true);
+            const response = await axios.post("/api/api/auth/googleauth", {
         idToken,
         email: user.email,
         displayName: user.displayName,
@@ -127,7 +129,9 @@ const Register = () => {
     } catch (error) {
       console.error("Error during Google sign-in:", error);
       toast.error(error.response.data.error);
-    }
+    }finally{
+      setGloading(false);
+    } 
   };
 
   return (
@@ -145,7 +149,7 @@ const Register = () => {
               </span>
               <span className="font-[500] text-sm">Sign Up with google</span>
             </span>
-            {loading && (
+            {gloading && (
               <label className="absolute right-3 loading loading-spinner loading-sm"></label>
             )}
           </button>
