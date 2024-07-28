@@ -59,7 +59,7 @@ const Login = () => {
 
     try {
       setLoaing(true);
-      const response = await axios.post("https://verceltest-api.vercel.app/api/auth/signin", {
+      const response = await axios.post("/api/api/auth/signin", {
         username: store.username,
         email: store.email,
         password: store.password,
@@ -86,7 +86,7 @@ const Login = () => {
       const user = result.user;
       const idToken = await user.getIdToken();
 
-      const response = await axios.post("https://verceltest-api.vercel.app/api/auth/googlelogin", {
+      const response = await axios.post("/api/api/auth/googlelogin", {
         idToken,
       });
 

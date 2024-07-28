@@ -31,7 +31,7 @@ const Profile = () => {
 
     try {
       setLoading(true);
-      const update = await axios.put(`https://verceltest-api.vercel.app/api/auth/update/${id}`, {
+      const update = await axios.put(`/api/api/auth/update/${id}`, {
         fullname: store.fullname,
         username: store.username,
         email: store.email,
@@ -62,7 +62,7 @@ const Profile = () => {
         await auth.signOut();
       }
 
-      const response = await axios.delete(`https://verceltest-api.vercel.app/api/auth/deleteuser/${id}`);
+      const response = await axios.delete(`/api/api/auth/deleteuser/${id}`);
       localStorage.removeItem("token");
       setAuthUser(null);
       toast.success("Account deleted successfully");
@@ -74,7 +74,7 @@ const Profile = () => {
 
   const fetchData = async (id) => {
     try {
-      const response = await axios.get(`https://verceltest-api.vercel.app/api/auth/getusersbyid/${id}`);
+      const response = await axios.get(`/api/api/auth/getusersbyid/${id}`);
       setStore(response.data);
     } catch (error) {
       console.log(error.message);
