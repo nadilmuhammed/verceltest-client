@@ -82,7 +82,7 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post("/api/auth/signup", {
+      const response = await axios.post("https://verceltest-api.vercel.app/api/auth/signup", {
         fullname: formData.fullname,
         username: formData.username,
         email: formData.email,
@@ -111,7 +111,7 @@ const Register = () => {
       const user = result.user;
       const idToken = await user.getIdToken();
       // Send user details to the backend
-      const response = await axios.post("/api/auth/googleauth", {
+      const response = await axios.post("https://verceltest-api.vercel.app/api/auth/googleauth", {
         idToken,
         email: user.email,
         displayName: user.displayName,

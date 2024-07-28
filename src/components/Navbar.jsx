@@ -44,7 +44,7 @@ const Navbar = () => {
       }
 
       setLoading(true)
-      const response = await axios.post("/api/auth/logout");
+      const response = await axios.post("https://verceltest-api.vercel.app/api/auth/logout");
       const res = response.data;
       if (res.error) {
         throw new Error(res.error);
