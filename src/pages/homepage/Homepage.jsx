@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 const Homepage = () => {
   const [imgLoading, setImgLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const imagesPerPage = 3;
 
   const handleImageLoading = () => {
     setImgLoading(true);
@@ -34,6 +36,20 @@ const Homepage = () => {
     },
   ];
 
+  const indexOfLastImage = currentPage * imagesPerPage;
+  const indexOfFirstImage = indexOfLastImage - imagesPerPage;
+  const currentImages = images.slice(indexOfFirstImage, indexOfLastImage);
+
+  // Handle pagination button clicks
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(images.length / imagesPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
   return (
     <div className="">
       <div className="text-black mt-10 text-justify">
@@ -50,10 +66,10 @@ const Homepage = () => {
         harum asperiores ipsa soluta fugiat?
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center my-4 gap-5">
-        {images.map((items) => {
+        {currentImages.map((items) => {
           return (
             <img
-            key={items.id}
+              key={items.id}
               src={items.img}
               alt="image"
               className={`rounded-lg shadow-lg shadow-black ${
@@ -63,6 +79,19 @@ const Homepage = () => {
             />
           );
         })}
+      </div>
+      <div className="flex justify-center items-center">
+        <div className="join">
+        {pageNumbers.map((number) => (
+            <button
+              key={number}
+              onClick={() => handlePageChange(number)}
+              className={`join-item btn ${currentPage === number ? "btn-active" : ""}`}
+            >
+              {number}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
