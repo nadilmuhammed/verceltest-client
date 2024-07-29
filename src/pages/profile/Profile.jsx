@@ -107,8 +107,8 @@ const Profile = () => {
             className="flex flex-col gap-5 mt-5"
           >
             <div className="flex flex-col md:flex-row gap-5">
-              <div className="flex flex-col">
-                <label className="font-[600]">Full Name</label>
+              <div className="flex flex-col gap-1">
+                <label className="font-[500] text-sm">Full Name</label>
                 <input
                   type="text"
                   placeholder="Enter your name"
@@ -118,8 +118,8 @@ const Profile = () => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="flex flex-col">
-                <label className="font-[600]">Username</label>
+              <div className="flex flex-col gap-1">
+                <label className="font-[500] text-sm">Username</label>
                 <input
                   type="text"
                   placeholder="Enter your username"
@@ -130,8 +130,8 @@ const Profile = () => {
                 />
               </div>
             </div>
-            <div className="flex flex-col">
-              <label className="font-[600]">Email</label>
+            <div className="flex flex-col gap-1">
+              <label className="font-[500] text-sm">Email</label>
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -141,8 +141,8 @@ const Profile = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="flex flex-col">
-              <label className="font-[600]">Password</label>
+            <div className="flex flex-col gap-1">
+              <label className="font-[500] text-sm">Password</label>
               <input
                 type="password"
                 placeholder="Enter your new Password"

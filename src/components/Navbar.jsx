@@ -60,8 +60,8 @@ const Navbar = () => {
   };
 
   return (
-    <div className="">
-      <div className="px-3 md:px-10 py-3 md:py-5 bg-black text-white">
+    <div className="bg-black">
+      <div className="px-3 md:px-10 py-3 md:py-5 text-white max-w-[1440px] mx-auto">
         <nav className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <button
