@@ -135,7 +135,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center w-full min-h-screen p-5">
+    <div className="flex justify-center items-center w-full min-h-screen px-5 md:px-0">
       <div className=" flex flex-col justify-center items-center gap-5">
         <h1 className="text-3xl font-[600] text-center">Create Your Account</h1>
         <div className="w-full">
