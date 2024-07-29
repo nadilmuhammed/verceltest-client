@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
@@ -10,6 +10,7 @@ import { signInWithCustomToken, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../firebase/firebase.config";
 
 const Login = () => {
+  const navigate = useNavigate();
   const { setAuthUser } = useAuthContext();
   const [view, setView] = useState(false);
   const [loading, setLoaing] = useState(false);
@@ -102,6 +103,7 @@ const Login = () => {
     } catch (error) {
       console.log(error.message);
       toast.error(error.response.data.error);
+      navigate("/register")
     } finally {
       setGloading(false);
     }
