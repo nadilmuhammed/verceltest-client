@@ -9,7 +9,7 @@ const Home = () => {
     <div>
       <Navbar />
       <WhatsappToggle />
-      <div className="px-3 md:px-10 mx-auto max-w-[1440px]">
+      <div className="px-3 md:px-10 mt-10 mb-10 mx-auto max-w-[1440px]">
         <div className="">
           <Outlet />
         </div>

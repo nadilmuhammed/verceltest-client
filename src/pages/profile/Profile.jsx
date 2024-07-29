@@ -97,7 +97,7 @@ const Profile = () => {
         </div>
       )}
       <div className="flex justify-center items-center">
-        <div className="mt-10">
+        <div className="">
           <h1 className="text-3xl font-[550] text-center">
             Update your Profile
           </h1>
