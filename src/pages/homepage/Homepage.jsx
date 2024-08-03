@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Sidebar from "../../components/Sidebar";
 
 const Homepage = () => {
   const [imgLoading, setImgLoading] = useState(false);
