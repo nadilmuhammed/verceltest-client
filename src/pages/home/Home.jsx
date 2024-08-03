@@ -3,7 +3,6 @@ import Navbar from "../../components/Navbar";
 import { Outlet } from "react-router-dom";
 import WhatsappToggle from "../../components/WhatsappToggle";
 import "./style.css";
-import Sidebar from "../../components/Sidebar";
 
 const Home = () => {
   return (
