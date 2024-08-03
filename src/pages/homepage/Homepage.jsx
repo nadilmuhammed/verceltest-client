@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const Homepage = () => {
   const [imgLoading, setImgLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const imagesPerPage = 3; // Set the number of images per page
+  const imagesPerPage = 6; // Set the number of images per page
 
   const handleImageLoading = () => {
     setImgLoading(true);
