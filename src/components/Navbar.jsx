@@ -12,7 +12,7 @@ import { auth } from "../firebase/firebase.config";
 const Navbar = () => {
   const { setAuthUser, authUser } = useAuthContext();
   const [open, setOpen] = useState(false);
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
   const popupRef = useRef(null);
 
   const handleOpen = () => {
@@ -27,23 +27,23 @@ const Navbar = () => {
 
   useEffect(() => {
     if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [open]);
 
   const handleLogout = async () => {
     const currentUser = auth.currentUser;
     try {
-      if(currentUser){
+      if (currentUser) {
         await auth.signOut();
       }
 
-      setLoading(true)
+      setLoading(true);
       const response = await axios.post("/api/api/auth/logout");
       const res = response.data;
       if (res.error) {
@@ -51,16 +51,16 @@ const Navbar = () => {
       }
       localStorage.removeItem("token");
       setAuthUser(null);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.log(error.message);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-black">
+    <div className="bg-black w-full fixed top-0 z-50">
       <div className="px-3 md:px-10 py-3 md:py-5 text-white max-w-[1440px] mx-auto">
         <nav className="flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -72,52 +72,63 @@ const Navbar = () => {
             </button>
             <Link to="/">Logo</Link>
           </div>
-         
+
+          <div
+            className={clsx(
+              "fixed w-screen h-full md:hidden bg-black/50 z-50 backdrop-blur-sm top-0 right-0 -translate-x-full transition-all",
+              open && "translate-x-0"
+            )}
+          >
             <div
-              className={clsx(
-                "fixed w-screen h-full md:hidden bg-black/50 backdrop-blur-sm top-0 right-0 -translate-x-full transition-all",
-                open && "translate-x-0"
-              )}
+              ref={popupRef}
+              className="absolute flex flex-col gap-8 left-0 top-0 p-3 bg-black text-white  rounded h-screen w-56"
             >
-              <div ref={popupRef} className="absolute flex flex-col gap-8 left-0 top-0 p-3 z-50 bg-black text-white  rounded h-screen w-56">
-                <div>
-                  <button onClick={() => setOpen(false)}>
-                    <IoClose size={32} className="" />
-                  </button>
-                </div>
-                <div className="flex flex-col gap-5" onClick={() => setOpen(false)}>
-                  <Link to="/">Home</Link>
-                  <Link to="/about">About</Link>
-                  <Link to="/contact">Contact</Link>
-                </div>
+              <div>
+                <button onClick={() => setOpen(false)}>
+                  <IoClose size={32} className="" />
+                </button>
+              </div>
+              <div
+                className="flex flex-col gap-5"
+                onClick={() => setOpen(false)}
+              >
+                <Link to="/">Home</Link>
+                <Link to="/about">About</Link>
+                <Link to="/contact">Contact</Link>
               </div>
             </div>
+          </div>
+
+          <div className="hidden md:block ">
+            <div className="flex items-center gap-5">
+              <Link
+                to="/"
+                className="hover:scale-105 transition-all duration-500 ease-in-out"
+              >
+                Home
+              </Link>
+              <Link
+                to="/about"
+                className="hover:scale-105 transition-all duration-500 ease-in-out"
+              >
+                About
+              </Link>
+              <Link
+                to="/contact"
+                className="hover:scale-105 transition-all duration-500 ease-in-out"
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
 
           <div className="hidden md:block ">
             <div className="flex gap-5">
-              <div className="flex items-center gap-5">
-                <Link
-                  to="/"
-                  className="hover:scale-105 transition-all duration-150 ease-in-out"
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/about"
-                  className="hover:scale-105 transition-all duration-150 ease-in-out"
-                >
-                  About
-                </Link>
-                <Link
-                  to="/contact"
-                  className="hover:scale-105 transition-all duration-150 ease-in-out"
-                >
-                  Contact
-                </Link>
-              </div>
               <div className="flex items-center gap-3">
                 <Link
-                  to={authUser && authUser._id ? `/profile/${authUser._id}` : "#"}
+                  to={
+                    authUser && authUser._id ? `/profile/${authUser._id}` : "#"
+                  }
                   className="hover:scale-105 bg-white text-black p-[3px] hover:bg-black hover:text-white rounded transition-all duration-300 ease-in-out"
                 >
                   <FaUser size={18} className="" />
@@ -129,10 +140,10 @@ const Navbar = () => {
                   Logout
                 </button>
                 {loading && (
-                <div className="absolute top-0 left-0 bg-black/50 w-full h-screen backdrop-blur-sm">
-                  <div className="flex justify-center items-center h-screen">
-                    <label className="loading loading-dots loading-lg"></label>
-                  </div>
+                  <div className="absolute top-0 left-0 bg-black/50 w-full h-screen backdrop-blur-sm">
+                    <div className="flex justify-center items-center h-screen">
+                      <label className="loading loading-dots loading-lg"></label>
+                    </div>
                   </div>
                 )}
               </div>
@@ -140,7 +151,9 @@ const Navbar = () => {
           </div>
           <div className="block md:hidden">
             <div className="flex items-center gap-2">
-              <Link to={authUser && authUser._id ? `/profile/${authUser._id}` : "#"}>
+              <Link
+                to={authUser && authUser._id ? `/profile/${authUser._id}` : "#"}
+              >
                 <MdAccountBox size={32} />
               </Link>
               <button
