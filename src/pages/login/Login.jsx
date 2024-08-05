@@ -70,10 +70,14 @@ const Login = () => {
       if (res.error) {
         throw new Error(res.error);
       }
-      localStorage.setItem("token", JSON.stringify(res));
-      setAuthUser(res);
-      toast.success("Logged In");
-      setLoaing(false);
+      if(res.role === 'user'){
+        localStorage.setItem("token", JSON.stringify(res));
+        setAuthUser(res);
+        toast.success("Logged In");
+        setLoaing(false);
+      }else{
+        toast.error("You are not authorized to access this page");  
+      }
     } catch (error) {
       console.log(error.message);
       toast.error(error.response.data.error);
