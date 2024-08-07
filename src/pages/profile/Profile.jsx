@@ -6,16 +6,21 @@ import { useParams } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import { auth } from "../../firebase/firebase.config";
 import { deleteUser } from "firebase/auth";
+import { IoCamera } from "react-icons/io5";
 
 const Profile = () => {
   const { setAuthUser } = useAuthContext();
   const [loading, setLoading] = useState(false);
+  const [selectedGender, setSelectedGender] = useState("");
   const [userLoading, setUserLoading] = useState(false);
+  const [profilePic, setProfilePic] = useState("");
+  const [profilePicPreview, setProfilePicPreview] = useState("");
   const [store, setStore] = useState({
     fullname: "",
     username: "",
     email: "",
     password: "",
+    profilePic: "",
   });
 
   const handleChange = (e) => {
@@ -26,24 +31,59 @@ const Profile = () => {
     }));
   };
 
+  useEffect(() => {
+    if (store.profilePic) {
+      setProfilePicPreview(`/api/uploads/${store.profilePic}`);
+    }
+  }, [store.profilePic]);
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setProfilePic(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePicPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    document.getElementById("profilePicInput").click();
+  };
+
+  const handleGenderChange = (event) => {
+    setSelectedGender(event.target.value);
+  };
+
   const { id } = useParams();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
-      const update = await axios.put(`/api/api/auth/update/${id}`, {
-        fullname: store.fullname,
-        username: store.username,
-        email: store.email,
-        password: store.password,
-      });
+      const formData = new FormData();
+      formData.append("fullname", store.fullname);
+      formData.append("username", store.username);
+      formData.append("email", store.email);
+      if (store.password) {
+        formData.append("password", store.password);
+      }
+      if (profilePic) {
+        formData.append("profilePic", profilePic);
+      }
+      formData.append("gender", selectedGender);
+      const update = await axios.put(`/api/api/auth/update/${id}`, formData);
       const res = update.data;
 
       if (res.error) {
         throw new Error(res.error);
       }
       toast.success("Profile Upated");
+      if (res.profilePic) {
+        setProfilePicPreview(`/api/uploads/${res.profilePic}`);
+      }
     } catch (error) {
       console.error(error.message);
       toast.error("Error updating profile");
@@ -78,6 +118,7 @@ const Profile = () => {
       setUserLoading(true);
       const response = await axios.get(`/api/api/auth/getusersbyid/${id}`);
       setStore(response.data);
+      setSelectedGender(response.data.gender);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -92,7 +133,7 @@ const Profile = () => {
   return (
     <>
       {userLoading && (
-        <div className="absolute bg-black/40 backdrop-blur-sm flex justify-center items-center w-full h-screen top-0 left-0">
+        <div className="absolute bg-black/40 backdrop-blur-sm flex justify-center items-center w-full h-screen top-0 left-0 z-50">
           <span className="loading loading-dots loading-lg text-white" />
         </div>
       )}
@@ -106,6 +147,28 @@ const Profile = () => {
             action=""
             className="flex flex-col gap-5 mt-5"
           >
+            <div className="flex justify-center">
+              <div className="relative p-1">
+                <img
+                  src={profilePicPreview || store.gender === 'male' ? "/images/profile.png" : '/images/woman.png'}
+                  alt="profile-pic"
+                  className="w-20 h-20 rounded-full bg-cover"
+                />
+                <input
+                  type="file"
+                  id="profilePicInput"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ display: "none" }}
+                />
+                <button
+                  className="absolute bottom-3 right-0"
+                  onClick={handleClick}
+                >
+                  <IoCamera size={20} />
+                </button>
+              </div>
+            </div>
             <div className="flex flex-col md:flex-row gap-5">
               <div className="flex flex-col gap-1">
                 <label className="font-[500] text-sm">Full Name</label>
@@ -151,6 +214,28 @@ const Profile = () => {
                 value={store.password}
                 onChange={handleChange}
               />
+            </div>
+            <div className="flex gap-5 justify-center">
+              <div className="flex gap-1">
+                <input
+                  type="radio"
+                  name="gender"
+                  value='male'
+                  checked={selectedGender === 'male'}
+                  onChange={handleGenderChange}
+                />
+                <label>Male</label>
+              </div>
+              <div className="flex gap-1">
+                <input
+                  type="radio"
+                  name="gender"
+                  value='female'
+                  checked={selectedGender === 'female'}
+                  onChange={handleGenderChange}
+                />
+                <label>Female</label>
+              </div>
             </div>
             <div className="text-center">
               <button

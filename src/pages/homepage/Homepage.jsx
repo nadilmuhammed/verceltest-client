@@ -154,7 +154,7 @@ const Homepage = () => {
         </div>
       </div>
 
-      <div className="mt-5 w-full h-[80vh] bg-fixed bg-parallax bg-cover flex justify-center items-center rounded-[2rem]">
+      <div className="mt-5 w-full h-[80vh] bg-fixed bg-parallax bg-cover flex justify-center items-center text-center rounded-[2rem]">
         <h3 className="text-5xl text-white">This is a "PARALLAX IMAGE"</h3>
       </div>
     </div>
