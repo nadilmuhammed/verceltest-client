@@ -8,19 +8,19 @@ dotenv.config();
 export default defineConfig({
   plugins: [react()],
   server: {
-    // proxy: {
-    //     '/api': {
-    //       target: 'https://verceltest-api.vercel.app',
-    //       changeOrigin: true,
-    //       rewrite: (path) => path.replace(/^\/api/, ''),
-    //     },
-    //   },
-      proxy: {
+    proxy: {
         '/api': {
-          target: 'http://localhost:5000',
+          target: 'https://verceltest-api.vercel.app',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
+      // proxy: {
+      //   '/api': {
+      //     target: 'http://localhost:5000',
+      //     changeOrigin: true,
+      //     rewrite: (path) => path.replace(/^\/api/, ''),
+      //   },
+      // },
   },
 });
