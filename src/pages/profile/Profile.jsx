@@ -4,9 +4,10 @@ import toast from "react-hot-toast";
 import { GiTrashCan } from "react-icons/gi";
 import { useParams } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
-import { auth } from "../../firebase/firebase.config";
+import app, { auth } from "../../firebase/firebase.config";
 import { deleteUser } from "firebase/auth";
 import { IoCamera } from "react-icons/io5";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 
 const Profile = () => {
   const { setAuthUser } = useAuthContext();
@@ -23,6 +24,8 @@ const Profile = () => {
     profilePic: "",
   });
 
+  const [initialStore, setInitialStore] = useState({});
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setStore((prevData) => ({
@@ -33,13 +36,15 @@ const Profile = () => {
 
   useEffect(() => {
     if (store.profilePic) {
-      setProfilePicPreview(`/api/uploads/${store.profilePic}`);
+      setProfilePicPreview(store.profilePic);
     }
   }, [store.profilePic]);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    setProfilePic(file);
+    if (file) {
+      setProfilePic(file);
+    }
 
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -61,29 +66,61 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const isChanged =
+      store.fullname !== initialStore.fullname ||
+      store.username !== initialStore.username ||
+      store.email !== initialStore.email ||
+      (store.password && store.password !== "") ||
+      selectedGender !== initialStore.gender ||
+      profilePic;
+
+    if (!isChanged) {
+      toast.error("No changes detected");
+      return;
+    }
+
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("fullname", store.fullname);
-      formData.append("username", store.username);
-      formData.append("email", store.email);
-      if (store.password) {
-        formData.append("password", store.password);
-      }
+      let oldProfilePicUrl = store.profilePic;
+      let downloadURL = oldProfilePicUrl; // Default to existing image URL
       if (profilePic) {
-        formData.append("profilePic", profilePic);
+        const storage = getStorage(app);
+
+        // Delete the old profile picture from Firebase Storage
+        if (oldProfilePicUrl) {
+          const oldImageRef = ref(storage, oldProfilePicUrl);
+          await deleteObject(oldImageRef).catch((error) => {
+            console.error("Error deleting old image: ", error);
+          });
+        }
+
+        const storageRef = ref(storage, "userimages/" + profilePic.name);
+        await uploadBytes(storageRef, profilePic);
+        downloadURL = await getDownloadURL(storageRef);
       }
-      formData.append("gender", selectedGender);
+
+      const formData = {
+        fullname: store.fullname,
+        username: store.username,
+        email: store.email,
+        profilePic: downloadURL,
+        gender: selectedGender,
+      };
+      if (store.password) {
+        formData.password = store.password;
+      }
+
       const update = await axios.put(`/api/api/auth/update/${id}`, formData);
       const res = update.data;
 
       if (res.error) {
         throw new Error(res.error);
       }
+      setAuthUser(res)
       toast.success("Profile Upated");
-      if (res.profilePic) {
-        setProfilePicPreview(`/api/uploads/${res.profilePic}`);
-      }
+      setStore({
+        password: "",
+      });
     } catch (error) {
       console.error(error.message);
       toast.error("Error updating profile");
@@ -118,6 +155,8 @@ const Profile = () => {
       setUserLoading(true);
       const response = await axios.get(`/api/api/auth/getusersbyid/${id}`);
       setStore(response.data);
+      setInitialStore(response.data);
+      setProfilePicPreview(response.data.profilePic)
       setSelectedGender(response.data.gender);
     } catch (error) {
       console.log(error.message);
@@ -150,7 +189,13 @@ const Profile = () => {
             <div className="flex justify-center">
               <div className="relative p-1">
                 <img
-                  src={profilePicPreview || store.gender === 'male' ? "/images/profile.png" : '/images/woman.png'}
+                  src={
+                    profilePicPreview
+                      ? profilePicPreview
+                      : store.gender === "male"
+                      ? "/images/profile.png"
+                      : "/images/woman.png"
+                  }
                   alt="profile-pic"
                   className="w-20 h-20 rounded-full bg-cover"
                 />
@@ -220,8 +265,8 @@ const Profile = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value='male'
-                  checked={selectedGender === 'male'}
+                  value="male"
+                  checked={selectedGender === "male"}
                   onChange={handleGenderChange}
                 />
                 <label>Male</label>
@@ -230,8 +275,8 @@ const Profile = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value='female'
-                  checked={selectedGender === 'female'}
+                  value="female"
+                  checked={selectedGender === "female"}
                   onChange={handleGenderChange}
                 />
                 <label>Female</label>
